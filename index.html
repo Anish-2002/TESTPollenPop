@@ -49,7 +49,8 @@
           <h1 id="greeting">Tasks</h1>
           <div class="tiny">This is a demo prototype. No passwords, just your name.</div>
         </div>
-        <div class="pill" id="who" aria-hidden="false"></div>
+        <!-- Name card is hidden as requested in the previous turn -->
+        <div class="pill hide" id="who" aria-hidden="true"></div>
       </div>
 
       <div class="row">
@@ -65,26 +66,26 @@
           <div class="tiny" id="saveMsg" role="status" aria-live="polite"></div>
         </section>
 
-        <aside class="rightCol" aria-label="share and open on phone">
-          <h3>Share / open on phone</h3>
+        <aside class="rightCol" aria-label="Share this page via QR code and submit feedback">
+          <h3>Share / Open on Phone</h3>
           <div class="qr">
             <div id="qrcode" aria-hidden="true"></div>
             <div class="qrMeta">
-              <div class="tiny" id="qrHint">Scan to open this exact page + your name.</div>
-              <a id="shareLink" href="#" target="_blank" rel="noopener noreferrer"></a>
-              <div style="margin-top:8px;">
-                <button class="btn" id="copyLinkBtn" type="button">Copy link</button>
-              </div>
+              <!-- Reverting QR hint to share page -->
+              <div class="tiny" id="qrHint">Scan to open this exact page and your name.</div>
             </div>
           </div>
-          <div class="tiny" style="margin-top:12px">
-            Works as a static page — you can host on GitHub Pages, Netlify, or Cloudflare Pages.
+
+          <!-- New dedicated section for feedback button -->
+          <div style="margin-top:20px; text-align:center;">
+            <p class="tiny">To submit feedback, please click the button below:</p>
+            <!-- feedbackBtn remains the same, used in app.js -->
+            <button class="btn" id="feedbackBtn" type="button">Submit Feedback</button>
           </div>
         </aside>
       </div>
     </section>
 
-    <p class="tiny version">v0.3 — responsive build with progress bar + a11y (modernized)</p>
   </main>
 
   <footer class="footer">

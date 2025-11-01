@@ -7,6 +7,11 @@ const VOTES_KEY_PREFIX = 'poc:votes:';
 const VERSION = '0.3-responsive';
 const ENDPOINT = ''; // optional server endpoint
 
+/* ---------------- Configuration Update ---------------- */
+// Placeholder for the Google Form URL. Please replace this with your actual form link.
+const FEEDBACK_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScP_55QY_x0_R_K_9h2XlXm_w7y_qGqA4N6j1Q/viewform?usp=sf_link';
+
+
 /* ---------------- utilities ---------------- */
 const $ = s => document.querySelector(s);
 const safeGet = (k, fallback = null) => {
@@ -34,6 +39,55 @@ function toast(msg, opts = {}) {
   toastWrap.appendChild(el);
   setTimeout(() => el.remove(), opts.duration || 3000);
 }
+
+// Custom modal implementation to replace alert()/confirm()
+function showConfirm(message) {
+  return new Promise(resolve => {
+    const modal = document.createElement('div');
+    modal.className = 'custom-modal-backdrop';
+    modal.innerHTML = `
+      <div class="custom-modal-content">
+        <p>${message}</p>
+        <div class="custom-modal-actions">
+          <button id="modalConfirm" class="btn">OK</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    const confirmButton = modal.querySelector('#modalConfirm');
+    
+    // Add simple CSS for the modal here, as we can't edit style.css
+    const style = document.createElement('style');
+    style.textContent = `
+      .custom-modal-backdrop {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.6); display: flex; justify-content: center;
+        align-items: center; z-index: 1000;
+      }
+      .custom-modal-content {
+        background: white; padding: 25px; border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); max-width: 90%;
+        width: 300px; text-align: center;
+      }
+      .custom-modal-actions { margin-top: 15px; }
+      .custom-modal-content p { margin: 0 0 15px; font-weight: 600; }
+    `;
+    document.head.appendChild(style);
+
+    const closeModal = () => {
+      document.body.removeChild(modal);
+      document.head.removeChild(style);
+    };
+
+    confirmButton.addEventListener('click', () => {
+      resolve(true); // Always resolve true for a simple "OK" confirmation
+      closeModal();
+    });
+  });
+}
+
 
 /* ---------------- event queue ---------------- */
 function queueEvent(evt) {
@@ -97,12 +151,13 @@ const greeting = $('#greeting');
 const who = $('#who');
 const tasksEl = $('#tasks');
 const saveMsg = $('#saveMsg');
-const shareLink = $('#shareLink');
+// shareLink element is now removed from HTML
 const progressBar = $('#progressBar');
 const progressPct = $('#progressPct');
 const qrBox = $('#qrcode');
 const qrHint = $('#qrHint');
-const copyLinkBtn = $('#copyLinkBtn');
+// feedbackBtn remains for the new functionality
+const feedbackBtn = $('#feedbackBtn');
 
 /* ---------------- QR loading ---------------- */
 /**
@@ -153,8 +208,11 @@ loginForm.addEventListener('submit', async (ev) => {
   await start(name);
 });
 
+let currentUserName = ''; // Store the current user name for QR generation
+
 async function start(name) {
   safeSet('poc:name', name);
+  currentUserName = name; // Set current user name
   const key = NAME_KEY_PREFIX + name;
   if (!safeGet(key)) safeSet(key, {}); // init done map
 
@@ -165,6 +223,7 @@ async function start(name) {
 
   await loadTasks();
   renderTasks(name);
+  // Update QR to point to the current page + user's name
   await updateQR(name);
   toast('Loaded tasks', { type: 'success', duration: 1200 });
 }
@@ -249,28 +308,45 @@ function renderTasks(name) {
     });
 
     const vkey = VOTES_KEY_PREFIX + name;
-    const votes = safeGet(vkey, {});
-    function refreshVotes() {
-      const v = votes[t.id] || 0;
+    
+    // Pass the initial votes object to refreshVotes
+    function refreshVotes(currentVotes) {
+      const v = currentVotes[t.id] || 0;
       likeBtn.classList.toggle('active', v === 1);
       dislikeBtn.classList.toggle('active', v === -1);
       stat.textContent = v === 1 ? 'You liked this' : v === -1 ? 'You disliked this' : '';
     }
+    
     likeBtn.addEventListener('click', () => {
-      votes[t.id] = votes[t.id] === 1 ? 0 : 1;
-      safeSet(vkey, votes);
-      refreshVotes();
-      queueEvent({ name, action: votes[t.id] === 1 ? 'like' : 'clear_vote', task_id: t.id });
+      // 1. Read the LATEST votes from storage
+      const currentVotes = safeGet(vkey, {});
+      // 2. Modify the value for THIS task
+      currentVotes[t.id] = currentVotes[t.id] === 1 ? 0 : 1;
+      // 3. Save the modified object back to storage
+      safeSet(vkey, currentVotes);
+      // 4. Update the UI using the NEW votes object
+      refreshVotes(currentVotes);
+      
+      queueEvent({ name, action: currentVotes[t.id] === 1 ? 'like' : 'clear_vote', task_id: t.id });
       tick();
     });
+    
     dislikeBtn.addEventListener('click', () => {
-      votes[t.id] = votes[t.id] === -1 ? 0 : -1;
-      safeSet(vkey, votes);
-      refreshVotes();
-      queueEvent({ name, action: votes[t.id] === -1 ? 'dislike' : 'clear_vote', task_id: t.id });
+      // 1. Read the LATEST votes from storage
+      const currentVotes = safeGet(vkey, {});
+      // 2. Modify the value for THIS task
+      currentVotes[t.id] = currentVotes[t.id] === -1 ? 0 : -1;
+      // 3. Save the modified object back to storage
+      safeSet(vkey, currentVotes);
+      // 4. Update the UI using the NEW votes object
+      refreshVotes(currentVotes);
+      
+      queueEvent({ name, action: currentVotes[t.id] === -1 ? 'dislike' : 'clear_vote', task_id: t.id });
       tick();
     });
-    refreshVotes();
+    
+    // Initial UI render on load
+    refreshVotes(safeGet(vkey, {}));
   });
 
   updateProgress(safeGet(NAME_KEY_PREFIX + name, {}));
@@ -289,31 +365,30 @@ function tick() {
   tick._t = setTimeout(() => (saveMsg.textContent = ''), 1200);
 }
 
-/* ---------------- QR generation ---------------- */
+/* ---------------- QR generation (Reverted to share page logic) ---------------- */
+// Function now takes the current user's name
 async function updateQR(name) {
   try {
-    const url = new URL(location.href);
-    url.searchParams.set('name', name);
-    const urlStr = url.toString();
-    shareLink.textContent = urlStr;
-    shareLink.href = urlStr;
-
     // clear
     qrBox.innerHTML = '';
+
+    // Construct the share URL (base URL + ?name=User Name)
+    const baseUrl = window.location.origin + window.location.pathname;
+    const shareUrl = `${baseUrl}?name=${encodeURIComponent(name)}`;
 
     // ensure library
     const ok = await ensureQRLib(4000);
     if (ok && window.QRCode) {
       // qrcodejs inserts a child (img or table)
       try {
-        new QRCode(qrBox, { text: urlStr, width: 128, height: 128 });
-        qrHint.textContent = 'Scan to open this exact page + your name.';
+        new QRCode(qrBox, { text: shareUrl, width: 128, height: 128 });
+        qrHint.textContent = 'Scan to open this exact page and your name.';
       } catch (err) {
         console.warn('qrcode draw failed', err);
-        qrHint.textContent = 'QR generation failed — copy the link below.';
+        qrHint.textContent = 'QR generation failed — use the button below.';
       }
     } else {
-      qrHint.textContent = 'QR not available (offline or blocked). Copy the link below to open on your phone.';
+      qrHint.textContent = 'QR not available (offline or blocked).';
       // qrBox will stay empty; shareLink is visible and copy works
     }
   } catch (err) {
@@ -321,21 +396,14 @@ async function updateQR(name) {
   }
 }
 
-copyLinkBtn.addEventListener('click', async () => {
-  if (!shareLink.href) return;
-  try {
-    await navigator.clipboard.writeText(shareLink.href);
-    toast('Link copied to clipboard', { type: 'success' });
-  } catch (err) {
-    console.warn('clipboard failed', err);
-    // fallback
-    const tmp = document.createElement('textarea');
-    tmp.value = shareLink.href;
-    document.body.appendChild(tmp);
-    tmp.select();
-    try { document.execCommand('copy'); toast('Link copied', { type: 'success' }); } catch { toast('Copy failed — select manually', { type: 'error' }); }
-    tmp.remove();
-  }
+// Event listener for the new feedback button
+feedbackBtn.addEventListener('click', async () => {
+  // Show confirmation dialog before redirecting
+  await showConfirm('You are being redirected to a Google Form to submit feedback.');
+  
+  // Open the feedback form URL in a new tab
+  window.open(FEEDBACK_FORM_URL, '_blank');
+  toast('Opening feedback form...', { type: 'success' });
 });
 
 /* ---------------- auto start ---------------- */

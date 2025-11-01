@@ -48,7 +48,7 @@ button:disabled{opacity:.6;cursor:not-allowed}
 .qr{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap}
 #qrcode{border-radius:8px;padding:6px;background:#fff;border:1px dashed #e5e7eb;min-width:120px;min-height:120px;display:grid;place-items:center}
 .qrMeta{min-width:160px;flex:1;}
-/* This is the new rule to wrap the URL */
+/* This is the rule to wrap the URL */
 #shareLink{
   word-break: break-all;
 }
@@ -107,3 +107,4 @@ progress::-webkit-progress-value{background:var(--cta)}
   .task{padding:10px}
   #qrcode{min-width:96px;min-height:96px}
 }
+
