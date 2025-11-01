@@ -9,7 +9,7 @@ const ENDPOINT = ''; // optional server endpoint
 
 /* ---------------- Configuration Update ---------------- */
 // Placeholder for the Google Form URL. Please replace this with your actual form link.
-const FEEDBACK_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScP_55QY_x0_R_K_9h2XlXm_w7y_qGqA4N6j1Q/viewform?usp=sf_link';
+const FEEDBACK_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSdofOkktqnShUm4emsW-ZdOhxfyycKfg4TVsryWo-tsYi6NVQ/viewform?usp=header';
 
 
 /* ---------------- utilities ---------------- */
