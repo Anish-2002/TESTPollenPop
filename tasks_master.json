@@ -3,71 +3,71 @@
     "id": "NAT-001",
     "text": "Capture your most alive moment",
     "primary_core": "🌿Nature",
-    "stage": "Sprout",
+    "stage": "🌱Sprout",
     "audience": "All",
-    "tags": ["Habits"]
+    "tags": ["🔄Habits"]
   },
   {
     "id": "NAT-002",
     "text": "Nurture a plant",
     "primary_core": "🌿Nature",
-    "stage": "Seeds",
+    "stage": "🌰Seeds",
     "audience": "All",
-    "tags": ["Natural Materials"]
+    "tags": ["🪵Natural Materials"]
   },
   {
     "id": "NAT-003",
     "text": "Compost today’s waste appropriately",
     "primary_core": "🌿Nature",
-    "stage": "Seeds",
+    "stage": "🌰Seeds",
     "audience": "All",
-    "tags": ["Waste"]
+    "tags": ["🗑️Waste"]
   },
   {
     "id": "NAT-004",
     "text": "Keep 1-week weather log",
     "primary_core": "🌿Nature",
-    "stage": "Bloom",
+    "stage": "🌸Bloom",
     "audience": "Individual",
-    "tags": ["Lifestyle 🚶‍♀️"]
+    "tags": ["🚶‍♀️Lifestyle"]
   },
   {
     "id": "NAT-005",
     "text": "Smell or touch a wild thing",
     "primary_core": "🌿Nature",
-    "stage": "Seeds",
+    "stage": "🌰Seeds",
     "audience": "Individual",
-    "tags": ["Habits"]
+    "tags": ["🔄Habits"]
   },
   {
     "id": "NAT-006",
     "text": "Fix or reuse 1 item",
     "primary_core": "Action",
-    "stage": "Seeds",
+    "stage": "🌰Seeds",
     "audience": "All",
-    "tags": ["Crafting"]
+    "tags": ["✂️Crafting"]
   },
   {
     "id": "NAT-007",
     "text": "Cook dinner from leftovers",
     "primary_core": "Action",
-    "stage": "Sprout",
+    "stage": "🌱Sprout",
     "audience": "All",
-    "tags": ["Habits"]
+    "tags": ["🔄Habits"]
   },
   {
     "id": "NAT-008",
     "text": "Plan 1-week minimal waste",
     "primary_core": "Action",
-    "stage": "Bloom",
+    "stage": "🌸Bloom",
     "audience": "All",
-    "tags": ["Habits"]
+    "tags": ["🔄Habits"]
   },
   {
     "id": "NAT-009",
     "text": "Candlelight dinner",
     "primary_core": "Action",
-    "stage": "Sprout",
+    "stage": "🌱Sprout",
     "audience": "Family",
     "tags": ["Energy"]
   },
@@ -75,79 +75,79 @@
     "id": "NAT-010",
     "text": "Support local shops",
     "primary_core": "Action",
-    "stage": "Seeds",
+    "stage": "🌰Seeds",
     "audience": "All",
-    "tags": ["Local Engagement"]
+    "tags": ["🏘️Local Engagement"]
   },
   {
     "id": "NAT-011",
     "text": "Take note 1 thing you appreciate",
     "primary_core": "Reflective",
-    "stage": "Seeds",
+    "stage": "🌰Seeds",
     "audience": "Individual",
-    "tags": ["Mindset Shift"]
+    "tags": ["🧠Mindset Shift"]
   },
   {
     "id": "NAT-012",
     "text": "Sort items to donate",
     "primary_core": "Reflective",
-    "stage": "Sprout",
+    "stage": "🌱Sprout",
     "audience": "Family",
-    "tags": ["Recycle Idea"]
+    "tags": ["♻️Recycle Idea"]
   },
   {
     "id": "NAT-013",
     "text": "Trace the life of 1 object",
     "primary_core": "Reflective",
-    "stage": "Seeds",
+    "stage": "🌰Seeds",
     "audience": "Individual",
-    "tags": ["Mindset Shift"]
+    "tags": ["🧠Mindset Shift"]
   },
   {
     "id": "NAT-014",
     "text": "What grounded you today?",
     "primary_core": "Reflective",
-    "stage": "Seeds",
+    "stage": "🌰Seeds",
     "audience": "Individual",
-    "tags": ["Mindset Shift"]
+    "tags": ["🧠Mindset Shift"]
   },
   {
     "id": "NAT-015",
     "text": "Write a thank-you note to nature",
     "primary_core": "Reflective",
-    "stage": "Seeds",
+    "stage": "🌰Seeds",
     "audience": "Individual",
-    "tags": ["Habits"]
+    "tags": ["🔄Habits"]
   },
   {
     "id": "NAT-016",
     "text": "Make something silly from scrap",
     "primary_core": "Creative",
-    "stage": "Seeds",
+    "stage": "🌰Seeds",
     "audience": "Family",
-    "tags": ["Crafting"]
+    "tags": ["✂️Crafting"]
   },
   {
     "id": "NAT-017",
-    "text": "Write 2-line micro story",
+    "text": "Write 2-line micro  📚Story",
     "primary_core": "Creative",
-    "stage": "Seeds",
+    "stage": "🌰Seeds",
     "audience": "All",
-    "tags": ["Story 📚"]
+    "tags": [" 📚Story"]
   },
   {
     "id": "NAT-018",
     "text": "Reimagine the second use for broken item",
     "primary_core": "Creative",
-    "stage": "Seeds",
+    "stage": "🌰Seeds",
     "audience": "All",
-    "tags": ["Recycle Idea"]
+    "tags": ["♻️Recycle Idea"]
   },
   {
     "id": "NAT-019",
     "text": "Gift creation to someone",
     "primary_core": "Creative",
-    "stage": "Seeds",
+    "stage": "🌰Seeds",
     "audience": "All",
     "tags": ["Bonding 🫶🏼"]
   },
@@ -155,8 +155,8 @@
     "id": "NAT-020",
     "text": "Role swap for a day",
     "primary_core": "Creative",
-    "stage": "Sprout",
+    "stage": "🌱Sprout",
     "audience": "Family",
-    "tags": ["Mindset Shift"]
+    "tags": ["🧠Mindset Shift"]
   }
 ]
