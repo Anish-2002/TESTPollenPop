@@ -4,7 +4,7 @@ const OUTBOX_KEY = 'poc:outbox';
 const UID_KEY = 'poc:uid';
 const NAME_KEY_PREFIX = 'poc:done:';
 const VOTES_KEY_PREFIX = 'poc:votes:';
-const VERSION = '0.3-responsive';
+const VERSION = '0.4-T02-complete'; // Updated version for tracking
 const ENDPOINT = ''; // optional server endpoint
 
 /* ---------------- Configuration Update ---------------- */
@@ -58,7 +58,7 @@ function showConfirm(message) {
 
     const confirmButton = modal.querySelector('#modalConfirm');
     
-    // Add simple CSS for the modal here, as we can't edit style.css
+    // Add simple CSS for the modal here, as we can't edit style.css directly
     const style = document.createElement('style');
     style.textContent = `
       .custom-modal-backdrop {
@@ -120,26 +120,113 @@ async function flushOutbox() {
 }
 window.addEventListener('online', () => flushOutbox());
 
-/* ---------------- tasks ---------------- */
+/* ---------------- tasks / filtering ---------------- */
 const FALLBACK_TASKS = [
-  { id: 't1', text: 'Do a 2-minute “Seed of the Day” action', audience: 'All' },
-  { id: 't2', text: 'Sort one drawer for reuse/recycle', audience: 'Individual' },
-  { id: 't3', text: 'Family walk: count 5 tree species', audience: 'Family' },
-  { id: 't4', text: 'Share 1 sustainability nugget with a friend', audience: 'All' },
-  { id: 't5', text: 'Plan one meat-free meal', audience: 'All' }
+  { id: 't1', text: 'Do a 2-minute “Seed of the Day” action', audience: 'All', primary_core: 'Action', stage: 'Seeds', tags: ['Habits'] },
+  { id: 't2', text: 'Sort one drawer for reuse/recycle', audience: 'Individual', primary_core: 'Reflective', stage: 'Sprout', tags: ['Waste'] },
+  { id: 't3', text: 'Family walk: count 5 tree species', audience: 'Family', primary_core: 'Nature', stage: 'Sprout', tags: ['Bonding'] },
+  { id: 't4', text: 'Share 1 sustainability nugget with a friend', audience: 'All', primary_core: 'Creative', stage: 'Bloom', tags: ['Local Engagement'] },
+  { id: 't5', text: 'Plan one meat-free meal', audience: 'All', primary_core: 'Action', stage: 'Sprout', tags: ['Energy'] }
 ];
 let TASKS = [];
+let currentFilter = { core: '', stage: '', category: '' }; // Added category for completeness, though not in the UI
+
+/**
+ * Loads tasks, preferring tasks_master.json, falling back to tasks.json, then to defaults.
+ */
 async function loadTasks() {
+  const masterUrl = 'tasks_master.json';
+  const legacyUrl = 'tasks.json';
+  let loadedData = [];
+  
   try {
-    const res = await fetch('tasks.json', { cache: 'no-store' });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-    if (!Array.isArray(data)) throw new Error('Invalid tasks.json');
-    TASKS = data.filter(t => t && t.id && t.text).slice(0, 200);
-  } catch (err) {
-    console.warn('loadTasks fallback', err);
-    TASKS = FALLBACK_TASKS;
+    // 1. Try to load from the master file
+    const masterRes = await fetch(masterUrl, { cache: 'no-store' });
+    if (!masterRes.ok) throw new Error(`HTTP ${masterRes.status} on master file`);
+    
+    const data = await masterRes.json();
+    if (!Array.isArray(data)) throw new Error('Invalid tasks_master.json format');
+    loadedData = data;
+    console.log('Loaded tasks from master file.');
+
+  } catch (masterErr) {
+    // NOTE: This fallback may fail if running locally without a server due to file:// restrictions
+    console.warn('loadTasks: Falling back to legacy tasks.json', masterErr);
+    // 2. Fallback to legacy
+    try {
+      const legacyRes = await fetch(legacyUrl, { cache: 'no-store' });
+      if (!legacyRes.ok) throw new Error(`HTTP ${legacyRes.status} on legacy file`);
+
+      const data = await legacyRes.json();
+      if (!Array.isArray(data)) throw new Error('Invalid tasks.json format');
+      loadedData = data;
+      console.log('Loaded tasks from legacy file.');
+      
+    } catch (legacyErr) {
+      console.warn('loadTasks: Falling back to hardcoded defaults', legacyErr);
+      loadedData = FALLBACK_TASKS;
+    }
   }
+
+  // Final cleanup and assignment
+  // Standardize the field names from the CSV/JSON data (primary_core, stage, tags)
+  TASKS = loadedData.map(t => ({
+    id: t.id,
+    text: t.text,
+    primary_core: t['Core Themes'] || t.primary_core, // Use the more verbose CSV name if present
+    stage: t.Stage || t.stage, // Use the more verbose CSV name if present
+    audience: t['Audience tag'] || t.audience,
+    tags: Array.isArray(t.tags) ? t.tags : (t.Subcategories || '').split(',').map(s => s.trim()).filter(Boolean), // Normalize to an array of tags
+  })).filter(t => t && t.id && t.text).slice(0, 200);
+}
+
+/**
+ * Filters the task list based on the global currentFilter state using AND logic.
+ * @param {Array<Object>} allTasks The complete list of tasks.
+ * @returns {Array<Object>} The filtered list of tasks.
+ */
+function filterTasks(allTasks) {
+  const { core, stage, category } = currentFilter;
+
+  if (!core && !stage && !category) {
+    return allTasks; // No filters, return all tasks
+  }
+  
+  // Normalize filters for case-insensitive matching
+  const nCore = core ? core.toLowerCase() : null;
+  const nStage = stage ? stage.toLowerCase() : null;
+  const nCategory = category ? category.toLowerCase() : null;
+
+  return allTasks.filter(task => {
+    let coreMatch = true;
+    let stageMatch = true;
+    let categoryMatch = true;
+
+    // Core Theme filtering (checks task.primary_core)
+    if (nCore) {
+      const taskCore = task.primary_core || '';
+      // .includes() for robustness against emojis, though strict equality is fine too
+      coreMatch = taskCore.toLowerCase().includes(nCore); 
+    }
+
+    // Stage filtering (checks task.stage)
+    if (nStage) {
+      const taskStage = task.stage || '';
+      stageMatch = taskStage.toLowerCase() === nStage;
+    }
+    
+    // Category/Subcategory filtering (checks task.tags array)
+    if (nCategory) {
+      const taskTags = Array.isArray(task.tags) 
+        ? task.tags.map(c => c.trim().toLowerCase()) 
+        : [];
+        
+      categoryMatch = taskTags.includes(nCategory);
+    }
+
+    // AND Logic: all required conditions must be true
+    return coreMatch && stageMatch && categoryMatch;
+  });
 }
 
 /* ---------------- DOM refs ---------------- */
@@ -151,13 +238,16 @@ const greeting = $('#greeting');
 const who = $('#who');
 const tasksEl = $('#tasks');
 const saveMsg = $('#saveMsg');
-// shareLink element is now removed from HTML
 const progressBar = $('#progressBar');
 const progressPct = $('#progressPct');
 const qrBox = $('#qrcode');
 const qrHint = $('#qrHint');
-// feedbackBtn remains for the new functionality
 const feedbackBtn = $('#feedbackBtn');
+
+// New Filter DOM Refs
+const coreFilterSelect = $('#coreFilter');
+const stageFilterSelect = $('#stageFilter');
+const applyFilterBtn = $('#applyFilterBtn');
 
 /* ---------------- QR loading ---------------- */
 /**
@@ -167,31 +257,16 @@ const feedbackBtn = $('#feedbackBtn');
 function ensureQRLib(timeout = 4000) {
   if (window.QRCode) return Promise.resolve(true);
   return new Promise((resolve) => {
-    const existing = document.querySelector('script[data-qrcode-injected]');
-    if (existing) {
-      // wait until library appears or timeout
-      const start = Date.now();
-      const check = () => {
-        if (window.QRCode) return resolve(true);
-        if (Date.now() - start > timeout) return resolve(false);
-        setTimeout(check, 120);
-      };
-      check();
-      return;
-    }
-    // inject
+    // Check for existing injection logic if necessary
     const s = document.createElement('script');
     s.src = 'https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js';
     s.defer = true;
     s.async = true;
-    s.setAttribute('data-qrcode-injected', '1');
     s.onload = () => {
-      // small delay to let global set
       setTimeout(() => resolve(!!window.QRCode), 80);
     };
     s.onerror = () => resolve(false);
     document.head.appendChild(s);
-    // fallback timeout
     setTimeout(() => resolve(!!window.QRCode), timeout + 100);
   });
 }
@@ -222,18 +297,102 @@ async function start(name) {
   appCard.classList.remove('hide');
 
   await loadTasks();
-  renderTasks(name);
-  // Update QR to point to the current page + user's name
+  
+  // 1. Initialize filters from URL parameters on start
+  initFiltersFromURL();
+
+  // 2. Render tasks based on initial filters
+  renderTasks(name, filterTasks(TASKS));
+  
   await updateQR(name);
   toast('Loaded tasks', { type: 'success', duration: 1200 });
 }
 
-function renderTasks(name) {
+/**
+ * Initializes filter dropdowns and the currentFilter state from URL parameters.
+ */
+function initFiltersFromURL() {
+    const params = new URLSearchParams(location.search);
+    const core = params.get('core') || '';
+    const stage = params.get('stage') || '';
+    const category = params.get('category') || '';
+    
+    // Set internal state
+    currentFilter = { core: core.toLowerCase(), stage: stage.toLowerCase(), category: category.toLowerCase() };
+
+    // Set UI dropdowns to match URL (case-insensitive find)
+    if (core) {
+        // Find the option whose value matches the URL param (case-insensitive)
+        const coreOption = Array.from(coreFilterSelect.options).find(opt => opt.value.toLowerCase() === core.toLowerCase());
+        if (coreOption) coreFilterSelect.value = coreOption.value;
+    }
+    if (stage) {
+        const stageOption = Array.from(stageFilterSelect.options).find(opt => opt.value.toLowerCase() === stage.toLowerCase());
+        if (stageOption) stageFilterSelect.value = stageOption.value;
+    }
+    // Category filter is URL-only for now, as it is not in the dropdowns.
+}
+
+/**
+ * Handles UI interaction for applying filters and updating the URL.
+ */
+applyFilterBtn.addEventListener('click', () => {
+    // 1. Get values from UI
+    const newCore = coreFilterSelect.value;
+    const newStage = stageFilterSelect.value;
+    
+    // 2. Update internal state and apply filter logic
+    currentFilter = { 
+        core: newCore ? newCore.toLowerCase() : '', 
+        stage: newStage ? newStage.toLowerCase() : '', 
+        category: '' // Reset category filter if it existed (since it's not a UI element here)
+    };
+    
+    // 3. Update URL (optional but good practice for sharing filtered view)
+    const params = new URLSearchParams(location.search);
+    if (newCore) {
+        params.set('core', newCore);
+    } else {
+        params.delete('core');
+    }
+    if (newStage) {
+        params.set('stage', newStage);
+    } else {
+        params.delete('stage');
+    }
+    // Maintain 'name' parameter for user context
+    if (currentUserName) {
+        params.set('name', currentUserName);
+    }
+
+    const newUrl = `${location.pathname}?${params.toString()}`;
+    // Use replaceState to change URL without a full page reload
+    window.history.replaceState(null, '', newUrl);
+
+    // 4. Render the filtered tasks
+    renderTasks(currentUserName, filterTasks(TASKS));
+});
+
+
+/**
+ * Renders the task list, now accepting a specific list to render.
+ * @param {string} name The current user's name.
+ * @param {Array<Object>} tasksToRender The list of tasks (filtered or unfiltered).
+ */
+function renderTasks(name, tasksToRender = TASKS) {
   const key = NAME_KEY_PREFIX + name;
   const done = safeGet(key, {});
   tasksEl.innerHTML = '';
 
-  TASKS.forEach(t => {
+  // Use the map to handle emojis for display only
+  const CORE_EMOJIS = {
+    'Nature': '🌿',
+    'Action': '⚡',
+    'Reflective': '🌙',
+    'Creative': '✨',
+  }
+
+  tasksToRender.forEach(t => {
     const row = document.createElement('div');
     row.className = 'task';
     row.setAttribute('role', 'listitem');
@@ -249,17 +408,44 @@ function renderTasks(name) {
     const title = document.createElement('div');
     title.className = 'taskTitle';
     title.textContent = t.text;
+    
+    // Start of updated meta/pill section
     const meta = document.createElement('div');
     meta.className = 'meta';
-    const pill = document.createElement('span');
-    pill.className = 'pill';
-    pill.textContent = t.audience || 'All';
-    meta.appendChild(pill);
 
-    if (Array.isArray(t.tags) && t.tags.length) {
+    // 1. Audience Pill (Existing)
+    if (t.audience) {
+        const audiencePill = document.createElement('span');
+        audiencePill.className = 'pill';
+        audiencePill.textContent = t.audience; 
+        meta.appendChild(audiencePill);
+    }
+
+    // 2. Core Theme Pill (New - using primary_core)
+    if (t.primary_core) {
+      const corePill = document.createElement('span');
+      corePill.className = 'pill';
+      // Add emoji for display
+      const coreDisplay = CORE_EMOJIS[t.primary_core] ? `${CORE_EMOJIS[t.primary_core]} ${t.primary_core}` : t.primary_core;
+      corePill.textContent = coreDisplay;
+      meta.appendChild(corePill);
+    }
+    
+    // 3. Stage Pill (New - using stage)
+    if (t.stage) {
+      const stagePill = document.createElement('span');
+      stagePill.className = 'pill';
+      stagePill.textContent = t.stage;
+      meta.appendChild(stagePill);
+    }
+
+    // 4. Subcategories/Tags (New - using tags array)
+    const tags = Array.isArray(t.tags) ? t.tags : [];
+    
+    if (tags.length) {
       const tagsWrap = document.createElement('div');
       tagsWrap.className = 'tags';
-      t.tags.forEach(tag => {
+      tags.forEach(tag => {
         const s = document.createElement('span');
         s.className = 'pill';
         s.textContent = tag;
@@ -267,6 +453,7 @@ function renderTasks(name) {
       });
       meta.appendChild(tagsWrap);
     }
+    // End of updated meta/pill section
 
     content.appendChild(title);
     content.appendChild(meta);
@@ -302,9 +489,10 @@ function renderTasks(name) {
       const map = safeGet(key, {});
       map[t.id] = cb.checked;
       safeSet(key, map);
-      queueEvent({ name, action: cb.checked ? 'done' : 'undone', task_id: t.id, tags: t.tags || [] });
+      // Ensure we pass all tags for server analytics
+      queueEvent({ name, action: cb.checked ? 'done' : 'undone', task_id: t.id, tags: t.tags || [], primary_core: t.primary_core || '', stage: t.stage || '' });
       tick();
-      updateProgress(map);
+      updateProgress(map, tasksToRender.length); // Use tasksToRender.length
     });
 
     const vkey = VOTES_KEY_PREFIX + name;
@@ -318,13 +506,9 @@ function renderTasks(name) {
     }
     
     likeBtn.addEventListener('click', () => {
-      // 1. Read the LATEST votes from storage
       const currentVotes = safeGet(vkey, {});
-      // 2. Modify the value for THIS task
       currentVotes[t.id] = currentVotes[t.id] === 1 ? 0 : 1;
-      // 3. Save the modified object back to storage
       safeSet(vkey, currentVotes);
-      // 4. Update the UI using the NEW votes object
       refreshVotes(currentVotes);
       
       queueEvent({ name, action: currentVotes[t.id] === 1 ? 'like' : 'clear_vote', task_id: t.id });
@@ -332,13 +516,9 @@ function renderTasks(name) {
     });
     
     dislikeBtn.addEventListener('click', () => {
-      // 1. Read the LATEST votes from storage
       const currentVotes = safeGet(vkey, {});
-      // 2. Modify the value for THIS task
       currentVotes[t.id] = currentVotes[t.id] === -1 ? 0 : -1;
-      // 3. Save the modified object back to storage
       safeSet(vkey, currentVotes);
-      // 4. Update the UI using the NEW votes object
       refreshVotes(currentVotes);
       
       queueEvent({ name, action: currentVotes[t.id] === -1 ? 'dislike' : 'clear_vote', task_id: t.id });
@@ -349,15 +529,30 @@ function renderTasks(name) {
     refreshVotes(safeGet(vkey, {}));
   });
 
-  updateProgress(safeGet(NAME_KEY_PREFIX + name, {}));
+  updateProgress(safeGet(NAME_KEY_PREFIX + name, {}), tasksToRender.length);
 }
 
-function updateProgress(done) {
-  const completed = Object.values(done).filter(Boolean).length;
-  const pct = Math.round((completed / Math.max(1, TASKS.length)) * 100);
+/**
+ * Updates the progress bar based on the tasks currently being displayed.
+ * @param {Object} done - The map of completed tasks.
+ * @param {number} totalTasks - The total number of tasks being displayed/counted.
+ */
+function updateProgress(done, totalTasks) {
+  // Count only tasks that are both done AND are present in the current filtered list (TASKS is the original master list)
+  const completedTaskIds = Object.keys(done).filter(id => done[id]);
+  const completedInView = TASKS.filter(t => t.id && completedTaskIds.includes(t.id)).length;
+  
+  const pct = Math.round((completedInView / Math.max(1, totalTasks)) * 100); 
   progressBar.value = pct;
   progressPct.textContent = pct + '%';
+  
+  if (totalTasks === 0) {
+      progressBar.value = 0;
+      progressPct.textContent = '0%';
+      tasksEl.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--muted); font-weight: 600;">No tasks found matching the selected filter criteria.</div>';
+  }
 }
+
 
 function tick() {
   saveMsg.textContent = 'Saved locally ✓';
@@ -365,31 +560,25 @@ function tick() {
   tick._t = setTimeout(() => (saveMsg.textContent = ''), 1200);
 }
 
-/* ---------------- QR generation (Reverted to share page logic) ---------------- */
+/* ---------------- QR generation ---------------- */
 // Function now takes the current user's name
 async function updateQR(name) {
   try {
-    // clear
     qrBox.innerHTML = '';
+    const params = new URLSearchParams(location.search);
+    // Ensure the current filters are in the share URL
+    const shareUrl = `${window.location.origin}${location.pathname}?name=${encodeURIComponent(name)}${params.toString().includes('core') ? '&' + params.toString().split('&').filter(p => p.startsWith('core') || p.startsWith('stage') || p.startsWith('category')).join('&') : ''}`;
 
-    // Construct the share URL (base URL + ?name=User Name)
-    const baseUrl = window.location.origin + window.location.pathname;
-    const shareUrl = `${baseUrl}?name=${encodeURIComponent(name)}`;
-
-    // ensure library
     const ok = await ensureQRLib(4000);
     if (ok && window.QRCode) {
-      // qrcodejs inserts a child (img or table)
       try {
         new QRCode(qrBox, { text: shareUrl, width: 128, height: 128 });
         qrHint.textContent = 'Scan to open this exact page and your name.';
       } catch (err) {
-        console.warn('qrcode draw failed', err);
         qrHint.textContent = 'QR generation failed — use the button below.';
       }
     } else {
       qrHint.textContent = 'QR not available (offline or blocked).';
-      // qrBox will stay empty; shareLink is visible and copy works
     }
   } catch (err) {
     console.error('updateQR', err);
@@ -398,15 +587,18 @@ async function updateQR(name) {
 
 // Event listener for the new feedback button
 feedbackBtn.addEventListener('click', async () => {
-  // Show confirmation dialog before redirecting
   await showConfirm('You are being redirected to a Google Form to submit feedback.');
-  
-  // Open the feedback form URL in a new tab
   window.open(FEEDBACK_FORM_URL, '_blank');
   toast('Opening feedback form...', { type: 'success' });
 });
 
 /* ---------------- auto start ---------------- */
 const storedName = safeGet('poc:name', '') || '';
-if (storedName) setTimeout(() => start(storedName), 180);
-if (initialName) setTimeout(() => start(initialName), 120);
+
+// If a name is in the URL (initialName) or stored locally (storedName),
+// prioritize the URL name to start the application only once.
+const nameToStart = initialName || storedName; 
+
+// Run start() after a small delay to ensure all DOM elements and
+// dynamically loaded scripts (like the QR lib) are ready.
+if (nameToStart) setTimeout(() => start(nameToStart), 180);
