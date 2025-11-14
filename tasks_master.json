@@ -1,162 +1,222 @@
 [
-  {
-    "id": "NAT-001",
-    "text": "Capture your most alive moment",
-    "primary_core": "🌿Nature",
-    "stage": "🌱Sprout",
-    "audience": "All",
-    "tags": ["🔄Habits"]
-  },
-  {
-    "id": "NAT-002",
-    "text": "Nurture a plant",
-    "primary_core": "🌿Nature",
-    "stage": "🌰Seeds",
-    "audience": "All",
-    "tags": ["🪵Natural Materials"]
-  },
-  {
-    "id": "NAT-003",
-    "text": "Compost today’s waste appropriately",
-    "primary_core": "🌿Nature",
-    "stage": "🌰Seeds",
-    "audience": "All",
-    "tags": ["🗑️Waste"]
-  },
-  {
-    "id": "NAT-004",
-    "text": "Keep 1-week weather log",
-    "primary_core": "🌿Nature",
-    "stage": "🌸Bloom",
-    "audience": "Individual",
-    "tags": ["🚶‍♀️Lifestyle"]
-  },
-  {
-    "id": "NAT-005",
-    "text": "Smell or touch a wild thing",
-    "primary_core": "🌿Nature",
-    "stage": "🌰Seeds",
-    "audience": "Individual",
-    "tags": ["🔄Habits"]
-  },
-  {
-    "id": "NAT-006",
-    "text": "Fix or reuse 1 item",
-    "primary_core": "Action",
-    "stage": "🌰Seeds",
-    "audience": "All",
-    "tags": ["✂️Crafting"]
-  },
-  {
-    "id": "NAT-007",
-    "text": "Cook dinner from leftovers",
-    "primary_core": "Action",
-    "stage": "🌱Sprout",
-    "audience": "All",
-    "tags": ["🔄Habits"]
-  },
-  {
-    "id": "NAT-008",
-    "text": "Plan 1-week minimal waste",
-    "primary_core": "Action",
-    "stage": "🌸Bloom",
-    "audience": "All",
-    "tags": ["🔄Habits"]
-  },
-  {
-    "id": "NAT-009",
-    "text": "Candlelight dinner",
-    "primary_core": "Action",
-    "stage": "🌱Sprout",
-    "audience": "Family",
-    "tags": ["Energy"]
-  },
-  {
-    "id": "NAT-010",
-    "text": "Support local shops",
-    "primary_core": "Action",
-    "stage": "🌰Seeds",
-    "audience": "All",
-    "tags": ["🏘️Local Engagement"]
-  },
-  {
-    "id": "NAT-011",
-    "text": "Take note 1 thing you appreciate",
-    "primary_core": "Reflective",
-    "stage": "🌰Seeds",
-    "audience": "Individual",
-    "tags": ["🧠Mindset Shift"]
-  },
-  {
-    "id": "NAT-012",
-    "text": "Sort items to donate",
-    "primary_core": "Reflective",
-    "stage": "🌱Sprout",
-    "audience": "Family",
-    "tags": ["♻️Recycle Idea"]
-  },
-  {
-    "id": "NAT-013",
-    "text": "Trace the life of 1 object",
-    "primary_core": "Reflective",
-    "stage": "🌰Seeds",
-    "audience": "Individual",
-    "tags": ["🧠Mindset Shift"]
-  },
-  {
-    "id": "NAT-014",
-    "text": "What grounded you today?",
-    "primary_core": "Reflective",
-    "stage": "🌰Seeds",
-    "audience": "Individual",
-    "tags": ["🧠Mindset Shift"]
-  },
-  {
-    "id": "NAT-015",
-    "text": "Write a thank-you note to nature",
-    "primary_core": "Reflective",
-    "stage": "🌰Seeds",
-    "audience": "Individual",
-    "tags": ["🔄Habits"]
-  },
-  {
-    "id": "NAT-016",
-    "text": "Make something silly from scrap",
-    "primary_core": "Creative",
-    "stage": "🌰Seeds",
-    "audience": "Family",
-    "tags": ["✂️Crafting"]
-  },
-  {
-    "id": "NAT-017",
-    "text": "Write 2-line micro  📚Story",
-    "primary_core": "Creative",
-    "stage": "🌰Seeds",
-    "audience": "All",
-    "tags": [" 📚Story"]
-  },
-  {
-    "id": "NAT-018",
-    "text": "Reimagine the second use for broken item",
-    "primary_core": "Creative",
-    "stage": "🌰Seeds",
-    "audience": "All",
-    "tags": ["♻️Recycle Idea"]
-  },
-  {
-    "id": "NAT-019",
-    "text": "Gift creation to someone",
-    "primary_core": "Creative",
-    "stage": "🌰Seeds",
-    "audience": "All",
-    "tags": ["Bonding 🫶🏼"]
-  },
-  {
-    "id": "NAT-020",
-    "text": "Role swap for a day",
-    "primary_core": "Creative",
-    "stage": "🌱Sprout",
-    "audience": "Family",
-    "tags": ["🧠Mindset Shift"]
-  }
+    {
+        "id": "NAT-001",
+        "text": "Capture your most alive moment test",
+        "primary_core": "🌿Nature",
+        "stage": "🌱Sprout",
+        "audience": "All",
+        "tags": ["🔄Habits"],
+        "impactValue": "Emotional benefit; low stress.",
+        "source": "Qualitative Assessment",
+        "confidence": "Medium"
+    },
+    {
+        "id": "NAT-002",
+        "text": "Nurture a plant",
+        "primary_core": "🌿Nature",
+        "stage": "🌰Seeds",
+        "audience": "All",
+        "tags": ["🪵Natural Materials"],
+        "impactValue": "CO2e negligible per action.",
+        "source": "Qualitative Assessment",
+        "confidence": "Medium"
+    },
+    {
+        "id": "NAT-003",
+        "text": "Compost today’s waste appropriately",
+        "primary_core": "🌿Nature",
+        "stage": "🌰Seeds",
+        "audience": "All",
+        "tags": ["🗑️Waste"],
+        "impactValue": "~0.15 kg CO2e avoided.",
+        "source": "Independent LCA",
+        "confidence": "Medium"
+    },
+    {
+        "id": "NAT-004",
+        "text": "Keep 1-week weather log",
+        "primary_core": "🌿Nature",
+        "stage": "🌸Bloom",
+        "audience": "Individual",
+        "tags": ["🚶‍♀️Lifestyle"],
+        "impactValue": "Awareness data-gathering; builds observation habit.",
+        "source": "Qualitative Assessment",
+        "confidence": "Medium"
+    },
+    {
+        "id": "NAT-005",
+        "text": "Smell or touch a wild thing",
+        "primary_core": "🌿Nature",
+        "stage": "🌰Seeds",
+        "audience": "Individual",
+        "tags": ["🔄Habits"],
+        "impactValue": "Mental restoration; attention training.",
+        "source": "Qualitative Assessment",
+        "confidence": "Medium"
+    },
+    {
+        "id": "NAT-006",
+        "text": "Fix or reuse 1 item",
+        "primary_core": "⚡Action",
+        "stage": "🌰Seeds",
+        "audience": "All",
+        "tags": ["✂️Crafting"],
+        "impactValue": "0.5 - 10+ kg CO2e avoided.",
+        "source": "Independent LCA",
+        "confidence": "Medium"
+    },
+    {
+        "id": "NAT-007",
+        "text": "Cook dinner from leftovers",
+        "primary_core": "⚡Action",
+        "stage": "🌱Sprout",
+        "audience": "All",
+        "tags": ["🔄Habits"],
+        "impactValue": "~0.5 kg CO2e, ~0.2 kWh saved.",
+        "source": "Independent LCA",
+        "confidence": "Medium"
+    },
+    {
+        "id": "NAT-008",
+        "text": "Plan 1-week minimal waste with frind and Family",
+        "primary_core": "⚡Action",
+        "stage": "🌸Bloom",
+        "audience": "All",
+        "tags": ["🔄Habits"],
+        "impactValue": "Meta-habit setup; impact realized in downstream actions.",
+        "source": "Qualitative Assessment",
+        "confidence": "Medium"
+    },
+    {
+        "id": "NAT-009",
+        "text": "Candlelight dinner",
+        "primary_core": "⚡Action",
+        "stage": "🌱Sprout",
+        "audience": "Family",
+        "tags": ["Energy"],
+        "impactValue": "0.1 kWh ≈ 0.08 kg CO2e saved.",
+        "source": "Independent LCA",
+        "confidence": "Medium"
+    },
+    {
+        "id": "NAT-010",
+        "text": "Support local shops",
+        "primary_core": "⚡Action",
+        "stage": "🌰Seeds",
+        "audience": "All",
+        "tags": ["🏘️Local Engagement"],
+        "impactValue": "Community resilience (qualitative).",
+        "source": "Qualitative Assessment",
+        "confidence": "Medium"
+    },
+    {
+        "id": "NAT-011",
+        "text": "Take note 1 thing you appreciate",
+        "primary_core": "🌙Reflective",
+        "stage": "🌰Seeds",
+        "audience": "Individual",
+        "tags": ["🧠Mindset Shift"],
+        "impactValue": "Psychological safety & pro-social behavior.",
+        "source": "Qualitative Assessment",
+        "confidence": "Medium"
+    },
+    {
+        "id": "NAT-012",
+        "text": "Sort items to donate",
+        "primary_core": "🌙Reflective",
+        "stage": "🌱Sprout",
+        "audience": "Family",
+        "tags": ["♻️Recycle Idea"],
+        "impactValue": "Proxy 1.0 kg CO2e avoided.",
+        "source": "Independent LCA",
+        "confidence": "Medium"
+    },
+    {
+        "id": "NAT-013",
+        "text": "Trace the life of 1 object",
+        "primary_core": "🌙Reflective",
+        "stage": "🌰Seeds",
+        "audience": "Individual",
+        "tags": ["🧠Mindset Shift"],
+        "impactValue": "Systems literacy; leads to smarter choices later.",
+        "source": "Qualitative Assessment",
+        "confidence": "Medium"
+    },
+    {
+        "id": "NAT-014",
+        "text": "What grounded you today?",
+        "primary_core": "🌙Reflective",
+        "stage": "🌰Seeds",
+        "audience": "Individual",
+        "tags": ["🧠Mindset Shift"],
+        "impactValue": "Attention training; stress reduction.",
+        "source": "Qualitative Assessment",
+        "confidence": "Medium"
+    },
+    {
+        "id": "NAT-015",
+        "text": "Write a thank-you note to nature",
+        "primary_core": "🌙Reflective",
+        "stage": "🌰Seeds",
+        "audience": "Individual",
+        "tags": ["🔄Habits"],
+        "impactValue": "Values reinforcement.",
+        "source": "Qualitative Assessment",
+        "confidence": "Medium"
+    },
+    {
+        "id": "NAT-016",
+        "text": "Make something silly from scrap",
+        "primary_core": "✨Creative",
+        "stage": "🌰Seeds",
+        "audience": "Family",
+        "tags": ["✂️Crafting"],
+        "impactValue": "Diverts small material (~50 g) from waste stream.",
+        "source": "Independent LCA",
+        "confidence": "Medium"
+    },
+    {
+        "id": "NAT-017",
+        "text": "Write 2-line micro 📚Story",
+        "primary_core": "✨Creative",
+        "stage": "🌰Seeds",
+        "audience": "All",
+        "tags": [" 📚Story"],
+        "impactValue": "Communication skill; culture building.",
+        "source": "Qualitative Assessment",
+        "confidence": "Medium"
+    },
+    {
+        "id": "NAT-018",
+        "text": "Reimagine the second use for broken item",
+        "primary_core": "✨Creative",
+        "stage": "🌰Seeds",
+        "audience": "All",
+        "tags": ["♻️Recycle Idea"],
+        "impactValue": "Design intention; impact realized if fix is executed.",
+        "source": "Qualitative Assessment",
+        "confidence": "Medium"
+    },
+    {
+        "id": "NAT-019",
+        "text": "Gift creation to someone",
+        "primary_core": "✨Creative",
+        "stage": "🌰Seeds",
+        "audience": "All",
+        "tags": ["Bonding 🫶🏼"],
+        "impactValue": "Proxy 0.2 kg CO2e avoided.",
+        "source": "Independent LCA",
+        "confidence": "Medium"
+    },
+    {
+        "id": "NAT-020",
+        "text": "Role swap for a day",
+        "primary_core": "✨Creative",
+        "stage": "🌱Sprout",
+        "audience": "Family",
+        "tags": ["🧠Mindset Shift"],
+        "impactValue": "Empathy + perspective-taking; cultural impact.",
+        "source": "Qualitative Assessment",
+        "confidence": "Medium"
+    }
 ]

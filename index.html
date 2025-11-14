@@ -8,7 +8,9 @@
   <title>PollenPop Trials — Tasks</title>
 
   <link rel="stylesheet" href="style.css" />
-  </head>
+  <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"
+    integrity="" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+</head>
 
 <body>
   <main class="wrap" role="main">
@@ -25,45 +27,63 @@
       <p>Enter your name to see today's tasks.</p>
 
       <form id="loginForm" novalidate>
-        <label for="name">Your Name</label>
-        <input type="text" id="name" required placeholder="e.g. Alex Nguyen" />
-        <button class="btn" type="submit">Continue</button>
+        <label for="name">Your name</label>
+        <input id="name" name="name" placeholder="e.g. Alex Nguyen" autocomplete="name" maxlength="50" />
+        <div class="form-row">
+          <button id="go" type="submit">Continue</button>
+        </div>
+        <p class="tiny" id="nameHelp">
+          Your name is stored only on this device and used for display. Anonymous feedback may be sent to improve future Seeds.
+        </p>
       </form>
+
+      <p class="tiny">Tip: You can also open a link like <code>?name=Alex</code> to auto-fill.</p>
     </section>
 
-    <section class="card appView hide" id="appCard" aria-labelledby="greeting">
+    <section class="card hide" id="appCard" aria-live="polite">
       <div class="topbar">
-        <h2 id="greeting">Hi [Name], here are your tasks:</h2>
-        <div class="who-tag">👤 <span id="who">User</span></div>
+        <div>
+          <h1 id="greeting">Tasks</h1>
+          <div class="tiny">This is a demo prototype. No accounts or tracking cookies.</div>
+        </div>
+        <div id="scoreDisplay" class="pill" style="font-weight:700; background: var(--cta); color: white;">
+            Total Points: +0
+        </div>
       </div>
-      
-      <section class="filter-bar" id="filterBar" aria-label="Task Filters">
-        <div class="filter-group">
-          <label for="coreFilter">Core Theme</label>
-          <select id="coreFilter" name="core">
-            <option value="">All Cores</option>
-            <option value="Nature">🌿 Nature</option>
-            <option value="Action">⚡ Action</option>
-            <option value="Reflective">🌙 Reflective</option>
-            <option value="Creative">✨ Creative</option>
-          </select>
-        </div>
-        
-        <div class="filter-group">
-          <label for="stageFilter">Stage</label>
-          <select id="stageFilter" name="stage">
-            <option value="">All Stages</option>
-            <option value="Seeds">🌰 Seeds</option>
-            <option value="Sprout">🌱 Sprout</option>
-            <option value="Bloom">🌸 Bloom</option>
-          </select>
-        </div>
-        
-        <button class="btn small" id="applyFilterBtn" type="button">Apply Filter</button>
-      </section>
-      <div class="main-content-grid">
-        <section class="leftCol" aria-label="Task list and progress">
-          <div class="progressWrap">
+
+      <div class="row">
+        <section class="leftCol">
+          
+          <div class="filterBar" style="margin-bottom: 15px;">
+              <div class="filter-dropdown" id="coreFilterDropdown">
+                  <div class="dropdown-header">
+                      <span>Core Theme:</span>
+                      <span class="summary" id="coreFilterSummary">All</span>
+                      <span class="icon">▼</span>
+                  </div>
+                  <div class="dropdown-list" id="coreFilterList">
+                      </div>
+              </div>
+              <div class="filter-dropdown" id="stageFilterDropdown">
+                  <div class="dropdown-header">
+                      <span>Stage:</span>
+                      <span class="summary" id="stageFilterSummary">All</span>
+                      <span class="icon">▼</span>
+                  </div>
+                  <div class="dropdown-list" id="stageFilterList">
+                      </div>
+              </div>
+              <div class="filter-dropdown" id="tagFilterDropdown">
+                  <div class="dropdown-header">
+                      <span>Subcategory:</span>
+                      <span class="summary" id="tagFilterSummary">All</span>
+                      <span class="icon">▼</span>
+                  </div>
+                  <div class="dropdown-list scroll-list" id="tagFilterList">
+                      </div>
+              </div>
+          </div>
+          <div class="progressWrap" aria-hidden="false">
             <progress id="progressBar" value="0" max="100"></progress>
             <div id="progressPct" class="tiny">0%</div>
           </div>
@@ -94,7 +114,6 @@
   <footer class="footer">
     <div>
       Feedback saved locally; anonymized stats may be sent to our secure sheet to improve Seeds.
-      No accounts or tracking cookies.
     </div>
   </footer>
 
