@@ -268,3 +268,48 @@ progress::-webkit-progress-value{background:var(--cta)}
     margin-top: 5px; /* Add a little spacing below the pills */
     font-style: italic;
 }
+/* --- Custom Modal Pop-up Styles --- */
+
+/* Backdrop: Covers the entire screen, centers content, and ensures it's on top */
+.custom-modal-backdrop { 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    background: rgba(0, 0, 0, 0.6); 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    z-index: 10000; /* Extremely high z-index to guarantee visibility */
+}
+
+/* Modal Content: The actual pop-up box */
+.custom-modal-content { 
+    background: white; 
+    padding: 25px; 
+    border-radius: 12px; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); 
+    max-width: 90%; 
+    width: 300px; 
+    text-align: center; 
+    /* Simple animation for better visual feedback */
+    animation: modal-in 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes modal-in {
+    from { transform: scale(0.7); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.custom-modal-actions { 
+    margin-top: 15px; 
+}
+
+/* Paragraph style inside the modal content */
+.custom-modal-content p { 
+    margin: 0 0 15px; 
+    font-weight: 600; 
+    font-size: 16px;
+    color: var(--fg); /* Use foreground color */
+}
