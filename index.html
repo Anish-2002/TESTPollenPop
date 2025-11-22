@@ -8,7 +8,7 @@
   <title>PollenPop Trials — Tasks</title>
 
   <link rel="stylesheet" href="style.css" />
-  <!-- prefer the QR lib from jsDelivr; app.js will also attempt dynamic loading if needed -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==2" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"
     integrity="" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
 </head>
@@ -23,44 +23,71 @@
       </div>
     </header>
 
-    <!-- Login -->
-    <section class="card" id="loginCard" aria-labelledby="loginTitle">
-      <h1 id="loginTitle">Welcome 👋</h1>
-      <p>Enter your name to see today's tasks.</p>
-
-      <form id="loginForm" novalidate>
-        <label for="name">Your name</label>
-        <input id="name" name="name" placeholder="e.g. Alex Nguyen" autocomplete="name" maxlength="50" />
-        <div class="form-row">
-          <button id="go" type="submit">Continue</button>
-        </div>
-        <p class="tiny" id="nameHelp">
-          Your name is stored only on this device and used for display. Anonymous feedback may be sent to improve future Seeds.
-        </p>
+    <section id="loginCard" class="card hide">
+      <h1>Welcome to the Trial App</h1>
+      <p>Please enter your name to start your session and load your allocated tasks.</p>
+      <form id="loginForm">
+        <label for="name">Your Name</label>
+        <input type="text" id="name" placeholder="E.g., Jane Doe" required />
+        <button type="submit" style="margin-top:15px; width:100%;">Start Trial</button>
       </form>
-
-      <p class="tiny">Tip: You can also open a link like <code>?name=Alex</code> to auto-fill.</p>
     </section>
 
-    <!-- App -->
-    <section class="card hide" id="appCard" aria-live="polite">
+    <section id="appCard" class="hide">
+      
       <div class="topbar">
-        <div>
-          <h1 id="greeting">Tasks</h1>
-          <div class="tiny">This is a demo prototype. No passwords, just your name.</div>
-        </div>
-        <!-- Name card is hidden as requested in the previous turn -->
-        <div class="pill hide" id="who" aria-hidden="true"></div>
+        <h2 id="greeting">Hi [Name], here are your tasks:</h2>
+        <div class="total-score-pill" id="score">Total Points: <span id="totalPoints">+0</span></div>
       </div>
-
+      
       <div class="row">
-        <section class="leftCol">
-          <h3>Your task list</h3>
+        <section class="leftCol" aria-label="Task List and Filters">
+          
+          <div class="filter-bar">
+              
+              <div class="filter-group" id="coreFilter">
+                  <label>Core Theme</label>
+                  <div class="custom-multi-select">
+                      <button class="select-btn" type="button">
+                          <span class="filter-name">Core Theme</span>
+                          <span class="count-badge hide">0 selected</span>
+                      </button>
+                      <div class="dropdown-panel hide">
+                          </div>
+                  </div>
+              </div>
 
-          <div class="progressWrap" aria-hidden="false">
-            <progress id="progressBar" value="0" max="100"></progress>
-            <div id="progressPct" class="tiny">0%</div>
+              <div class="filter-group" id="stageFilter">
+                  <label>Stage</label>
+                  <div class="custom-multi-select">
+                      <button class="select-btn" type="button">
+                          <span class="filter-name">Stage</span>
+                          <span class="count-badge hide">0 selected</span>
+                      </button>
+                      <div class="dropdown-panel hide">
+                          </div>
+                  </div>
+              </div>
+
+              <div class="filter-group" id="tagsFilter">
+                  <label>Sub Category</label>
+                  <div class="custom-multi-select">
+                      <button class="select-btn" type="button">
+                          <span class="filter-name">Sub Category</span>
+                          <span class="count-badge hide">0 selected</span>
+                      </button>
+                      <div class="dropdown-panel hide">
+                          </div>
+                  </div>
+              </div>
           </div>
+          
+          <div class="progressWrap" id="progressWrap" aria-hidden="false">
+            <progress id="progressBar" value="0" max="100"></progress>
+            <div id="progressPct" class="tiny">0/0 (0%)</div>
+          </div>
+          
+          <div id="noMatchMessage" class="no-match-message hide"></div>
 
           <div id="tasks" class="tasks" role="list" aria-live="polite" aria-atomic="true"></div>
           <div class="tiny" id="saveMsg" role="status" aria-live="polite"></div>
@@ -71,15 +98,12 @@
           <div class="qr">
             <div id="qrcode" aria-hidden="true"></div>
             <div class="qrMeta">
-              <!-- Reverting QR hint to share page -->
-              <div class="tiny" id="qrHint">Scan to open this exact page and your name.</div>
+              <div class="tiny" id="qrHint">Scan to open this exact page and your saved session.</div>
             </div>
           </div>
 
-          <!-- New dedicated section for feedback button -->
           <div style="margin-top:20px; text-align:center;">
             <p class="tiny">To submit feedback, please click the button below:</p>
-            <!-- feedbackBtn remains the same, used in app.js -->
             <button class="btn" id="feedbackBtn" type="button">Submit Feedback</button>
           </div>
         </aside>
@@ -90,11 +114,10 @@
 
   <footer class="footer">
     <div>
-      Feedback saved locally; anonymized stats may be sent to our secure sheet to improve Seeds.
-      No accounts or tracking cookies.
-    </div>
+        </div>
   </footer>
 
-  <script src="app.js" defer></script>
+  <script src="app.js"></script>
 </body>
+
 </html>

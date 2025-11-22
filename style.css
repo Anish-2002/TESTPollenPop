@@ -19,92 +19,393 @@ h3{margin:0 0 12px}
 p{color:var(--muted);margin:0 0 14px}
 label{display:block;margin:8px 0 6px;font-weight:600}
 
-input,button,.btn{font:inherit;border-radius:12px}
-input{padding:12px 14px;border:1px solid #d1d5db;width:100%}
-button{padding:10px 14px;border:none;background:var(--cta);color:#fff;font-weight:700;cursor:pointer}
-button:disabled{opacity:.6;cursor:not-allowed}
-.form-row{margin-top:12px;display:flex;gap:8px;align-items:center}
-.form-row button{width:auto;flex:0 0 auto}
+input,.btn{font:inherit;border-radius:12px}
+input:not([type="checkbox"]){padding:12px 14px;border:1px solid #d1d5db;width:100%}
 
-/* Layout grid */
+/* Button Styling */
+button{padding:10px 14px;border:none;background:var(--cta);color:#fff;font-weight:700;cursor:pointer;border-radius:12px;}
+button:disabled{opacity:.6;cursor:not-allowed}
+
+/* Layout Grid */
 .row{display:grid;grid-template-columns:1fr 340px;gap:24px}
 .leftCol{min-width:0}
 .rightCol{min-width:0}
 
-/* Responsive breakpoints */
 @media (max-width: 1000px){
-  .row{grid-template-columns:1fr 300px}
+  .row{grid-template-columns:1fr;gap:20px}
 }
-@media (max-width: 820px){
-  .row{grid-template-columns:1fr}
-  aside.rightCol{order:2}
-}
-@media (max-width: 420px){
-  .row{gap:12px}
-  .card{padding:16px}
+@media (max-width: 600px){
+  .wrap{padding:12px}
+  .card{padding:15px;border-radius:12px}
+  .filter-bar{grid-template-columns: 1fr;} 
 }
 
-/* QR area */
-.qr{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap}
-#qrcode{border-radius:8px;padding:6px;background:#fff;border:1px dashed #e5e7eb;min-width:120px;min-height:120px;display:grid;place-items:center}
-.qrMeta{min-width:160px;flex:1;}
-/* This is the rule to wrap the URL */
-#shareLink{
-  word-break: break-all;
+
+/* --- Filter Styles (Custom Multi-Select) --- */
+.filter-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 12px;
 }
 
-/* Tasks */
-.tasks{display:flex;flex-direction:column;gap:12px;margin-top:8px}
-.task{display:grid;grid-template-columns:40px 1fr 120px;gap:12px;align-items:start;padding:12px;border-radius:12px;border:1px solid #eaeaea;background:#fff;min-height:72px;word-wrap:break-word}
-.task > input[type=checkbox]{width:24px;height:24px;margin-top:6px}
-.task .taskTitle{font-size:15px;color:var(--fg);margin-bottom:6px}
-.task .meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.tags{display:flex;gap:6px;flex-wrap:wrap}
-.pill{display:inline-block;padding:4px 8px;border-radius:999px;border:1px solid #e5e7eb;background:#fafafa;color:#374151;font-size:12px}
-.votes{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
-.votes .btn{padding:6px 10px;border-radius:10px}
-
-@media (max-width:700px){
-  .task{grid-template-columns:40px 1fr; grid-template-rows:auto auto; }
-  .votes{grid-column:1/-1;flex-direction:row;justify-self:start}
-  .task .taskTitle{margin-right:8px}
+.filter-group label {
+    font-size: 14px;
+    margin-top: 0;
+    margin-bottom: 4px;
+    color: var(--muted);
+    font-weight: 500;
 }
 
-/* Progress */
-.progressWrap{display:flex;gap:8px;align-items:center;margin-bottom:10px}
-progress{width:100%;height:8px;border-radius:8px;overflow:hidden;appearance:none}
-progress::-webkit-progress-bar{background:#e5e7eb}
-progress::-webkit-progress-value{background:var(--cta)}
-#progressPct{min-width:44px;text-align:right;font-size:12px;color:var(--muted)}
+/* Custom Dropdown Container */
+.custom-multi-select {
+    position: relative;
+    width: 100%;
+}
 
-/* Misc */
-.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+/* FIX: Ensure space for the badge and proper alignment (TIGHT PLACEMENT) */
+.custom-multi-select .select-btn {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #d1d5db;
+    background: #fff;
+    color: var(--muted);
+    font-weight: 500;
+    text-align: left;
+    display: flex;
+    justify-content: flex-start; 
+    align-items: center;
+    position: relative;
+    padding-right: 35px; /* Space for the arrow */
+    gap: 6px; /* Tight space between filter name and badge */
+}
+
+/* Style for the filter name text inside the button */
+.filter-name {
+    margin-right: auto; /* Push the arrow to the right edge */
+    white-space: nowrap; 
+}
+
+/* Badge (Selected Tag) position FIX: Next to filter name */
+.count-badge {
+    background: var(--cta);
+    color: #fff;
+    padding: 2px 6px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.custom-multi-select .select-btn:after {
+    content: "▼";
+    font-size: 10px;
+    position: absolute;
+    right: 14px;
+    transition: transform 0.2s ease;
+}
+
+.custom-multi-select .select-btn.active {
+    background: #e0f7fa; 
+    color: var(--fg);
+    border-color: #00bcd4;
+}
+
+.custom-multi-select .select-btn:hover {
+    border-color: var(--cta);
+}
+
+/* Dropdown Panel */
+.dropdown-panel {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    max-height: 250px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.1);
+    z-index: 10;
+    padding: 8px 0;
+    margin-top: 4px;
+}
+
+.dropdown-item {
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+/* Style for unavailable/grayed out items */
+.dropdown-item.unavailable {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.dropdown-item.unavailable:hover {
+    background: none;
+}
+.dropdown-item.unavailable input[type="checkbox"] {
+    cursor: not-allowed;
+}
+
+
+.dropdown-item:hover {
+    background: #f3f4f6;
+}
+
+.dropdown-item input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    accent-color: var(--cta);
+    flex-shrink: 0;
+}
+
+.dropdown-item label {
+    margin: 0;
+    font-weight: 500;
+    font-size: 14px;
+    flex-grow: 1;
+    cursor: pointer;
+}
+
+/* --- Top Bar and Total Points --- */
+.topbar{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    margin-bottom:12px;
+}
+
+.total-score-pill {
+    background-color: var(--cta); 
+    color: #fff !important; 
+    padding: 8px 14px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 16px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    /* FIX: Remove inner tiny text styling as it's no longer present */
+}
+.total-score-pill #totalPoints {
+    color: #fff !important; 
+}
+.total-score-pill .tiny {
+    /* If the tiny div remains in the HTML, this ensures it's white */
+    color: rgba(255, 255, 255, 0.7) !important; 
+}
+#greeting {
+    flex-grow: 1; 
+    margin: 0;
+}
+
+.no-match-message {
+    text-align: center; 
+    padding: 40px 20px; 
+    border: 1px dashed #d1d5db; 
+    border-radius: 12px; 
+    margin-top: 20px; 
+    color: var(--muted);
+}
+
+
+/* --- Task Card Design Match --- */
+.tasks{display:flex;flex-direction:column;gap:12px;margin-top:20px}
+.task-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 15px; 
+    border-radius: 12px;
+    background: var(--card);
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 12px rgba(0,0,0,.03);
+    transition: opacity .3s ease;
+}
+
+.task-item.task-done {
+    opacity: 0.6;
+}
+.task-checkbox-wrap-outer {
+    flex-shrink: 0;
+    margin-top: 3px; 
+}
+
+.task-done-checkbox {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    accent-color: var(--success); 
+    cursor: pointer;
+}
+.task-content {
+    flex-grow: 1;
+    min-width: 0; 
+}
+.task-title-score-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.task-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--fg);
+    margin: 0;
+    flex-grow: 1;
+}
+
+.task-pills-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+    margin-bottom: 10px;
+    align-items: center; 
+}
+.task-score-green {
+    background-color: var(--success); 
+    color: #fff !important; 
+    padding: 4px 8px;
+    border-radius: 8px; 
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+
+.pill{
+    border-radius:999px;
+    padding:4px 8px;
+    font-weight:600;
+    font-size:12px;
+    line-height:1;
+    white-space:nowrap;
+    border: 1px solid transparent; 
+}
+
+.core-connect{background:#e0f2f1;color:#0d9488} 
+.core-act{background:#ffedd5;color:#f97316}    
+.core-reflect{background:#e0f2f1;color:#0d9488} 
+.core-create{background:#fee2e2;color:#ef4444}  
+
+.stage-seeds { border-color: #2563eb !important; color: #2563eb !important; background: #fff;}
+.stage-sprout { border-color: #10b981 !important; color: #10b981 !important; background: #fff;}
+.stage-bloom { border-color: #ef4444 !important; color: #ef4444 !important; background: #fff;}
+
+.tag-pill, .audience-pill { background:#f3f4f6; color:var(--muted); }
+
+
+.task-details {
+    font-size: 13px; 
+    color: var(--muted); 
+    line-height: 1.3;
+}
+.task-details strong {
+    font-weight: 700; 
+    margin-right: 4px;
+}
+.task-details p {
+    margin: 2px 0; 
+}
+
+
+.task-actions {
+    display: flex;
+    flex-direction: column; 
+    gap: 6px; 
+    flex-shrink: 0;
+    align-items: flex-end; 
+    padding-top: 3px; 
+}
+
+.vote-btn {
+    background: none;
+    border: 1px solid #d1d5db;
+    color: var(--muted);
+    width: 90px; 
+    height: 30px; 
+    border-radius: 6px; 
+    padding: 0 10px; 
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    cursor: pointer;
+    font-size: 13px; 
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.vote-btn:hover {
+  background: #f3f4f6;
+}
+
+.vote-btn.active {
+  color: #fff;
+  border-color: var(--cta);
+  background-color: var(--cta);
+}
+
+.downvote-btn.active {
+  background-color: var(--danger);
+  border-color: var(--danger);
+}
+
+
+/* Misc UI elements */
 .tiny{font-size:12px;color:var(--muted)}
-.pill{font-size:12px;padding:4px 8px}
+.progressWrap{display:flex;align-items:center;gap:10px;margin-top:20px}
+#progressBar{width:100%;height:10px;border-radius:999px;appearance:none;overflow:hidden}
+#progressBar::-webkit-progress-bar{background-color:#e5e7eb}
+#progressBar::-webkit-progress-value{background-color:var(--cta)}
+#progressBar::-moz-progress-bar{background-color:var(--cta)}
+.qr{padding:16px;border:1px solid #e5e7eb;border-radius:12px;display:flex;flex-direction:column;align-items:center;text-align:center}
+#qrcode{width:136px;height:136px;display:flex;justify-content:center;align-items:center}
+#qrcode img{border-radius:4px;border:4px solid #fff}
 .hide{display:none}
 
-/* This is the modified rule for top-center toasts */
-.toastWrap{
-  position:fixed;
-  top:18px;
-  left:50%;
-  transform:translateX(-50%);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:8px;
-  z-index:4000;
+/* Toast Notification Styles FIX: Centered at the top */
+.toastWrap {
+    position: fixed;
+    top: 20px;
+    left: 50%; 
+    transform: translateX(-50%); 
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
 }
-.toast{background:#fff;border:1px solid #e5e7eb;padding:10px 14px;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.08);font-size:14px}
-.toast.success{border-left:4px solid var(--success)}
-.toast.error{border-left:4px solid var(--danger)}
-
-:focus{outline:none}
-:focus-visible{outline:3px solid rgba(37,99,235,.18);outline-offset:2px;border-radius:8px}
-
-/* small screen safety */
-@media (max-width: 320px){
-  .task{padding:10px}
-  #qrcode{min-width:96px;min-height:96px}
+.toast {
+    background: var(--fg);
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    opacity: 0;
+    transform: translateY(-20px);
+    animation: fadeInOut 2s forwards;
 }
 
+.toast.success {
+    background: var(--success);
+}
+.toast.error {
+    background: var(--danger);
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(-20px); }
+    10% { opacity: 1; transform: translateY(0); }
+    90% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-20px); }
+}
